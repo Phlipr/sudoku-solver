@@ -1,24 +1,26 @@
-import logo from './logo.svg';
 import './App.css';
+import React, { useState } from "react";
+import styled from "styled-components";
 
-function App() {
+import Box from './components/box/box.component';
+
+const Board = styled.div`
+  display: flex;
+`;
+
+const initialBoxList = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+const App = () => {
+  const [boxes, setBoxes] = useState(initialBoxList);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Board>
+      {
+        boxes.map((box, idx) => (
+          <Box initialValue={box} id={idx} />
+        ))
+      }
+    </Board>
   );
 }
 
