@@ -6,13 +6,13 @@ const BoxContainer = styled.input`
     border-radius: 5px;
     background-color: lightblue;
     text-align: center;
-    width: 50px;
-    height: 50px;
-    margin: 5px;
+    font-size: 20px;
+    height: 40px;
+    width: 40px;
 `;
 
-const Box = ({ initialValue }) => {
-    const [value, setValue] = useState(initialValue);
+const Box = ({ id }) => {
+    const [value, setValue] = useState("");
     return (
         <BoxContainer
             className="box"

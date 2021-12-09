@@ -1,26 +1,36 @@
 import './App.css';
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
 
-import Box from './components/box/box.component';
+import Row from './components/row.component';
 
 const Board = styled.div`
-  display: flex;
+  align-items: center;
 `;
 
-const initialBoxList = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+const Title = styled.h1`
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+`;
+
+const Page = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+`;
 
 const App = () => {
-  const [boxes, setBoxes] = useState(initialBoxList);
 
   return (
-    <Board>
-      {
-        boxes.map((box, idx) => (
-          <Box initialValue={box} id={idx} />
-        ))
-      }
-    </Board>
+    <Page>
+      <Title>Sudoku Solver</Title>
+      <Board>
+        <Row id={1} />
+        <Row id={2} />
+        <Row id={3} />
+      </Board>
+    </Page>
   );
 }
 
