@@ -78,19 +78,47 @@ export const generateInitialState = () => {
         rows: rowState,
         columns: columnState,
         squares: squareState,
-        errors: []
+        errors: {}
     }
 
     return boardState;
 };
 
 export const addErrorToBoard = (errors, error) => {
-    if (errors.includes(error)) {
-        console.log("error included in errors already...");
-        return errors;
-    }
-    return [...errors, error];
+    console.log("addErrorToBoard...");
+    console.log("errors = ", errors);
+    console.log("error = ", error);
+    errors = {
+        ...errors,
+        [error.boxId]: error.errorMessage
+    };
+
+    return errors;
 };
+
+export const removeErrorFromBoard = (errors, boxIdToRemove) => {
+    console.log("removeErrorFromBoard...");
+    console.log("errors = ", errors);
+    console.log("boxIdToRevmove = ", boxIdToRemove);
+
+    let errorsArray = Object.entries(errors);
+
+    console.log("errorsArray = ", errorsArray);
+
+    let filteredErrors = errorsArray.reduce((currObj, error) => {
+        if (error[0] === boxIdToRemove) {
+            return currObj;
+        }
+
+        currObj[error.boxId] = error;
+
+        return currObj;
+    }, {});
+
+    console.log("filteredErrors = ", filteredErrors);
+
+    return filteredErrors;
+}
 
 export const addConflictWithToBox = (conflicts, conflict) => {
     return [...conflicts, conflict];

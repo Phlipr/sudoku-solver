@@ -28,6 +28,10 @@ const Error = styled.div`
 
 const App = () => {
   const errors = useSelector(selectErrors);
+  const errorsArray = Object.entries(errors);
+
+  console.log("errorsArray = ", errorsArray);
+  console.log("errors = ", errors);
 
   return (
     <Page>
@@ -38,14 +42,11 @@ const App = () => {
         <Row id={3} />
       </Board>
       {
-        errors.map(error => {
-          const { boxId, errorMessage } = error;
-          return (
-            <Error key={boxId} >
-              {errorMessage}
-            </Error>
-          )
-        })
+        errorsArray.map(error => (
+          <Error key={error[0]} >
+            {error[1]}
+          </Error>
+        ))
       }
     </Page>
   );

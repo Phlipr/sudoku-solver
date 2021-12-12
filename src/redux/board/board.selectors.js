@@ -37,7 +37,7 @@ export const selectRowValues = memoize((row) =>
             return boxIdsInRow.reduce((currObj, boxId) => {
                 let value = boxes[boxId].value;
 
-                if (value === 0) return currObj
+                if (value === 0 || value === "") return currObj
 
                 currObj[value] = boxId;
 
@@ -62,7 +62,7 @@ export const selectColumnValues = memoize((column) =>
             return boxIdsInColumn.reduce((currObj, boxId) => {
                 let value = boxes[boxId].value;
 
-                if (value === 0) return currObj
+                if (value === 0 || value === "") return currObj
 
                 currObj[value] = boxId;
 
@@ -87,7 +87,7 @@ export const selectSquareValues = memoize((square) =>
             return boxIdsInSquare.reduce((currObj, boxId) => {
                 let value = boxes[boxId].value;
 
-                if (value === 0) return currObj
+                if (value === 0 || value === "") return currObj
 
                 currObj[value] = boxId;
 

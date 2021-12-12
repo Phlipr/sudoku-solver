@@ -1,7 +1,7 @@
 import { generateInitialState } from "./board.utils";
 import BoardActionTypes from "./board.types";
 
-import { addErrorToBoard, addConflictWithToBox } from "./board.utils";
+import { addErrorToBoard, removeErrorFromBoard, addConflictWithToBox } from "./board.utils";
 
 const INITIAL_STATE = generateInitialState();
 
@@ -26,7 +26,7 @@ const boxReducer = (state = INITIAL_STATE, action) => {
         case BoardActionTypes.CLEAR_ERROR:
             return {
                 ...state,
-                errors: state.errors.filter(error => error.boxId !== action.boxId)
+                errors: removeErrorFromBoard(state.errors, action.boxId)
             }
         case BoardActionTypes.ADD_ERROR_TO_BOX:
             return {
