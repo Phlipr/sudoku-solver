@@ -26,6 +26,19 @@ const Error = styled.div`
   color: red
 `;
 
+const ErrorTitle = styled.h2`
+  color: red;
+  font-weight: bold;
+  margin-bottom: 0;
+`;
+
+const ErrorSubTitle = styled.h3`
+  color: red;
+  font-weight: bold;
+  margin-bottom: 0;
+  margin-top: 0;
+`;
+
 const App = () => {
   const errors = useSelector(selectErrors);
   const errorsArray = Object.entries(errors);
@@ -41,6 +54,16 @@ const App = () => {
         <Row id={2} />
         <Row id={3} />
       </Board>
+      {errorsArray.length > 0 &&
+        <>
+          <ErrorTitle>
+            Errors:
+          </ErrorTitle>
+          <ErrorSubTitle>
+            Boxes are referred to by 'row-column' notation.
+          </ErrorSubTitle>
+        </>
+      }
       {
         errorsArray.map(error => (
           <Error key={error[0]} >

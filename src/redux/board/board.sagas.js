@@ -18,36 +18,63 @@ export function* clearConflicts(box) {
     yield put(clearHasConflicts(boxId));
 }
 
+export function* getValuesToCheck(box) {
+    const { row, square, column } = box;
+
+    const rowValues = yield select(selectRowValues(row));
+    const squareValues = yield select(selectSquareValues(square));
+    const columnValues = yield select(selectColumnValues(column));
+
+    console.log("rowValues = ", rowValues);
+    console.log("squareValues = ", squareValues);
+    console.log("columnValues = ", columnValues);
+
+    const valuesToCheck = Object.assign({}, rowValues, squareValues, columnValues);
+
+    console.log("valuesToCheck = ", valuesToCheck);
+
+    return valuesToCheck;
+}
+
+export function* checkForConflicts(valueToCheck, values, box) {
+    console.log("valueToCheck = ", valueToCheck);
+    console.log("values = ", values);
+    console.log("box = ", box);
+
+    const { row, column, boxId } = box;
+
+    console.log("row = ", row);
+    console.log("column = ", column);
+    console.log("boxId = ", boxId);
+
+    if (valueToCheck in values) {
+        const boxCausingConflict = yield select(selectBox(values[valueToCheck]));
+
+        console.log("boxCausingConflict = ", boxCausingConflict);
+
+        const { row: rowConflict, column: columnConflict, boxId: boxIdConflict } = boxCausingConflict;
+
+        console.log("rowConflict = ", rowConflict);
+        console.log("columnConflict = ", columnConflict);
+        console.log("boxIdConflict = ", boxIdConflict);
+
+        yield put(addConflictToBox(boxId, boxIdConflict));
+        yield put(addError({ boxId, errorMessage: `Box ${row}-${column} has the same value (${valueToCheck}) as box ${rowConflict}-${columnConflict}.` }))
+
+        return true;
+    }
+
+    return false;
+}
+
 export function* validateBoxValue({ boxId, value }) {
     const box = yield select(selectBox(boxId));
 
-    const rowValues = yield select(selectRowValues(box.row));
-    console.log("rowValues = ", rowValues);
-    const squareValues = yield select(selectSquareValues(box.square));
-    console.log("squareValues = ", squareValues);
-    const columnValues = yield select(selectColumnValues(box.column));
-    console.log("columnValues = ", columnValues);
+    const valuesToCheck = yield call(getValuesToCheck, box);
 
-    if (value in rowValues) {
-        const boxCausingConflict = yield select(selectBox(rowValues[value]));
-        yield put(addConflictToBox(boxId, rowValues[value]));
-        yield put(addError({ boxId, errorMessage: `The value '${value}' in the box in row ${box.row} and column ${box.column} has already been placed in the box in row ${boxCausingConflict.row} and column ${boxCausingConflict.column}.` }));
-        return;
-    }
+    const foundConflict = yield call(checkForConflicts, value, valuesToCheck, box);
 
-    if (value in columnValues) {
-        const boxCausingConflict = yield select(selectBox(columnValues[value]));
-        yield put(addConflictToBox(boxId, columnValues[value]));
-        yield put(addError({ boxId, errorMessage: `The value '${value}' in the box in row ${box.row} and column ${box.column} has already been placed in the box in row ${boxCausingConflict.row} and column ${boxCausingConflict.column}.` }));
-        return;
-    }
-
-    if (value in squareValues) {
-        const boxCausingConflict = yield select(selectBox(squareValues[value]));
-        yield put(addConflictToBox(boxId, squareValues[value]));
-        yield put(addError({ boxId, errorMessage: `The value '${value}' in the box in row ${box.row} and column ${box.column} has already been placed in the box in row ${boxCausingConflict.row} and column ${boxCausingConflict.column}.` }));
-        return;
-    }
+    if (foundConflict) return;
 
     if ((value >= 1 && value <= 9) || !value) {
         yield put(clearError(boxId));
@@ -56,7 +83,7 @@ export function* validateBoxValue({ boxId, value }) {
         yield put(updateBoxValue(boxId, value));
 
     } else {
-        yield put(addError({ boxId, errorMessage: `The value '${value}' in the box in row ${box.row} and column ${box.column} is not allowed.  You must enter a number between 1 and 9.` }));
+        yield put(addError({ boxId, errorMessage: `The value '${value}' in the box ${box.row}-${box.column} is not allowed.  You must enter a number between 1 and 9.` }));
         yield put(addErrorToBox(boxId));
     }
 }

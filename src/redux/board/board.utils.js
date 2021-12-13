@@ -106,11 +106,15 @@ export const removeErrorFromBoard = (errors, boxIdToRemove) => {
     console.log("errorsArray = ", errorsArray);
 
     let filteredErrors = errorsArray.reduce((currObj, error) => {
+        console.log("currObj = ", currObj);
+        console.log("error = ", error);
+
         if (error[0] === boxIdToRemove) {
+            console.log("current error matches boxIdToRemove");
             return currObj;
         }
 
-        currObj[error.boxId] = error;
+        currObj[error[0]] = error[1];
 
         return currObj;
     }, {});
