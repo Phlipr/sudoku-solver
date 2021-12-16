@@ -65,7 +65,9 @@ export const generateInitialState = () => {
             column: getColumnNumber(boxId),
             square: getSquareNumber(boxId),
             hasError: false,
-            hasConflictWith: []
+            hasConflictWith: [],
+            inputted: false,
+            solved: false
         };
         rowState[currObject[boxId].row].push(boxId);
         columnState[currObject[boxId].column].push(boxId);
@@ -78,7 +80,10 @@ export const generateInitialState = () => {
         rows: rowState,
         columns: columnState,
         squares: squareState,
-        errors: {}
+        errors: {},
+        solving: false,
+        boxesInputted: 0,
+        boxesSolved: 0
     }
 
     return boardState;

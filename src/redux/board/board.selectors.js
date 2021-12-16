@@ -9,8 +9,18 @@ export const selectErrors = createSelector(
     board => board ? board.errors : []
 );
 
+export const selectSolving = createSelector(
+    [selectBoard],
+    board => board ? board.solving : false
+);
+
+export const selectBoxesInputted = createSelector(
+    [selectBoard],
+    board => board ? board.boxesInputted : 0
+);
+
 // Selectors related to boxes
-const selectBoxes = createSelector(
+export const selectBoxes = createSelector(
     [selectBoard],
     board => board.boxes
 );

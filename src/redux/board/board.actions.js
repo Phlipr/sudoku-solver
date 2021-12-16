@@ -48,3 +48,54 @@ export const clearFromHasConflicts = (boxIdWithConflict, boxIdToClear) => ({
     boxIdWithConflict,
     boxIdToClear
 });
+
+export const resetBoard = () => ({
+    type: BoardActionTypes.RESET_BOARD,
+});
+
+export const clearAllErrors = () => ({
+    type: BoardActionTypes.CLEAR_ALL_ERRORS,
+});
+
+export const clearAllErrorsFromBox = boxId => ({
+    type: BoardActionTypes.CLEAR_ALL_ERRORS_FROM_BOX,
+    boxId
+});
+
+export const solvePuzzle = () => ({
+    type: BoardActionTypes.SOLVE_PUZZLE
+});
+
+export const resetBoardToStart = () => ({
+    type: BoardActionTypes.RESET_BOARD_TO_START
+});
+
+export const saveBoxAsInputted = boxId => ({
+    type: BoardActionTypes.SAVE_BOX_AS_INPUTTED,
+    boxId
+});
+
+export const boardStartSaved = () => ({
+    type: BoardActionTypes.BOARD_START_SAVED
+});
+
+export const stopSolving = () => ({
+    type: BoardActionTypes.STOP_SOLVING
+});
+
+export const unsolveBox = boxId => ({
+    type: BoardActionTypes.UNSOLVE_BOX,
+    boxId
+});
+
+export const saveBoardInputs = () => ({
+    type: BoardActionTypes.SAVE_BOARD_INPUTS
+});
+
+export const increaseInputtedNumber = () => ({
+    type: BoardActionTypes.INCREASE_INPUTTED_NUMBER
+});
+
+export const decreaseInputtedNumber = () => ({
+    type: BoardActionTypes.DECREASE_INPUTTED_NUMBER
+});

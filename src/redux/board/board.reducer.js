@@ -7,6 +7,10 @@ const INITIAL_STATE = generateInitialState();
 
 const boxReducer = (state = INITIAL_STATE, action) => {
     switch (action.type) {
+        case BoardActionTypes.RESET_BOARD:
+            return {
+                ...INITIAL_STATE
+            }
         case BoardActionTypes.UPDATE_BOX_VALUE:
             return {
                 ...state,
@@ -36,6 +40,24 @@ const boxReducer = (state = INITIAL_STATE, action) => {
                     [action.boxId]: {
                         ...state.boxes[action.boxId],
                         hasError: true
+                    }
+                }
+            }
+        case BoardActionTypes.CLEAR_ALL_ERRORS:
+            return {
+                ...state,
+                errors: {}
+            }
+        case BoardActionTypes.CLEAR_ALL_ERRORS_FROM_BOX:
+            return {
+                ...state,
+                boxes: {
+                    ...state.boxes,
+                    [action.boxId]: {
+                        ...state.boxes[action.boxId],
+                        hasConflict: false,
+                        hasError: false,
+                        hasConflictWith: []
                     }
                 }
             }
@@ -92,6 +114,49 @@ const boxReducer = (state = INITIAL_STATE, action) => {
                         hasConflictWith: []
                     }
                 }
+            }
+        case BoardActionTypes.BOARD_START_SAVED:
+            return {
+                ...state,
+                solving: true
+            }
+        case BoardActionTypes.STOP_SOLVING:
+            return {
+                ...state,
+                solving: false
+            }
+        case BoardActionTypes.SAVE_BOX_AS_INPUTTED:
+            return {
+                ...state,
+                boxes: {
+                    ...state.boxes,
+                    [action.boxId]: {
+                        ...state.boxes[action.boxId],
+                        inputted: true,
+                    }
+
+                }
+            }
+        case BoardActionTypes.UNSOLVE_BOX:
+            return {
+                ...state,
+                boxes: {
+                    ...state.boxes,
+                    [action.boxId]: {
+                        ...state.boxes[action.boxId],
+                        solved: false
+                    }
+                }
+            }
+        case BoardActionTypes.INCREASE_INPUTTED_NUMBER:
+            return {
+                ...state,
+                boxesInputted: state.boxesInputted + 1
+            }
+        case BoardActionTypes.DECREASE_INPUTTED_NUMBER:
+            return {
+                ...state,
+                boxesInputted: state.boxesInputted - 1
             }
         default:
             return state;
