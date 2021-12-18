@@ -19,6 +19,26 @@ export const selectBoxesInputted = createSelector(
     board => board ? board.boxesInputted : 0
 );
 
+export const selectBoxesSolved = createSelector(
+    [selectBoard],
+    board => board ? board.boxesSolved : 0
+);
+
+export const selectLogicRounds = createSelector(
+    [selectBoard],
+    board => board ? board.logicRounds : 0
+);
+
+export const selectCheckForGivensRounds = createSelector(
+    [selectBoard],
+    board => board ? board.checkForGivensRounds : 0
+);
+
+export const selectCheckForGivensArray = createSelector(
+    [selectBoard],
+    board => board ? board.checkForGivensArray : []
+);
+
 // Selectors related to boxes
 export const selectBoxes = createSelector(
     [selectBoard],

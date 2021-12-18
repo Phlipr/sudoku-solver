@@ -99,3 +99,30 @@ export const increaseInputtedNumber = () => ({
 export const decreaseInputtedNumber = () => ({
     type: BoardActionTypes.DECREASE_INPUTTED_NUMBER
 });
+
+export const increaseSolvedNumber = () => ({
+    type: BoardActionTypes.INCREASE_SOLVED_NUMBER
+});
+
+export const decreaseSolvedNumber = () => ({
+    type: BoardActionTypes.DECREASE_SOLVED_NUMBER
+});
+
+export const increaseLogicRounds = () => ({
+    type: BoardActionTypes.INCREASE_LOGIC_ROUNDS
+});
+
+export const increaseCheckForGivensRounds = () => ({
+    type: BoardActionTypes.INCREASE_CHECK_FOR_GIVENS_ROUNDS
+});
+
+export const addBoxToCheckForGivensArray = (given) => ({
+    type: BoardActionTypes.ADD_BOX_TO_CHECK_FOR_GIVENS_ARRAY,
+    given
+});
+
+export const boxSolved = (boxId, value) => ({
+    type: BoardActionTypes.BOX_SOLVED,
+    boxId,
+    value
+});

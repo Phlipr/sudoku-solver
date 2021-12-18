@@ -4,7 +4,15 @@ import { useSelector, useDispatch } from 'react-redux';
 import styled from "styled-components";
 
 import Row from './components/row.component';
-import { selectBoxesInputted, selectErrors, selectSolving } from './redux/board/board.selectors';
+import {
+  selectBoxesInputted,
+  selectErrors,
+  selectSolving,
+  selectBoxesSolved,
+  selectLogicRounds,
+  selectCheckForGivensRounds,
+  selectCheckForGivensArray
+} from './redux/board/board.selectors';
 import {
   resetBoard as resetBoardInRedux,
   clearAllErrors as clearAllErrorsInRedux,
@@ -26,6 +34,19 @@ const BoxNumbers = styled.h2`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+
+  & span {
+    margin: 0 15px;
+  }
+
+  & progress {
+    margin-left: 10px;
+    margin-top: 7px;
+  }
+
+  & label {
+    margin-left: 20px;
+  }
 `;
 
 const Page = styled.div`
@@ -77,7 +98,11 @@ const App = () => {
   const errors = useSelector(selectErrors);
   const solvingPuzzle = useSelector(selectSolving);
   const boxesInputted = useSelector(selectBoxesInputted);
+  const boxesSolved = useSelector(selectBoxesSolved);
   const errorsArray = Object.entries(errors);
+  const logicRounds = useSelector(selectLogicRounds);
+  const checkForGivensRounds = useSelector(selectCheckForGivensRounds);
+  const checkforGivensArray = useSelector(selectCheckForGivensArray);
 
   const resetBoard = () => dispatch(resetBoardInRedux());
   const clearAllErrors = () => dispatch(clearAllErrorsInRedux());
@@ -102,6 +127,9 @@ const App = () => {
       }
       <BoxNumbers>
         <span>{`Boxes Inputted: ${boxesInputted}`}</span>
+        <span>{`Boxes Solved: ${boxesSolved}`}</span>
+        <label htmlFor="solved">Boxes completed:</label>
+        <progress id="solved" value={(boxesInputted + boxesSolved) / 81 * 100} max="100"></progress>
       </BoxNumbers>
       <Board>
         <Row id={1} />
@@ -139,6 +167,15 @@ const App = () => {
               </StyledButton>
             }
           </ButtonContainer>
+        </>
+      }
+      {solvingPuzzle &&
+        <>
+          <div>Logic Rounds: {logicRounds}</div>
+          <div>CheckForGivens Rounds: {checkForGivensRounds}</div>
+          <h2>CheckForGivens:</h2>
+          <h5>Box Notation: row-column(CheckForGivens Round)</h5>
+          <div>{checkforGivensArray.toString()}</div>
         </>
       }
     </Page>

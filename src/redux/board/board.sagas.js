@@ -17,7 +17,13 @@ import {
     unsolveBox,
     solvePuzzle,
     decreaseInputtedNumber,
-    increaseInputtedNumber
+    increaseInputtedNumber,
+    decreaseSolvedNumber,
+    increaseLogicRounds,
+    increaseCheckForGivensRounds,
+    addBoxToCheckForGivensArray,
+    boxSolved,
+    increaseSolvedNumber
 } from "./board.actions";
 import {
     selectBoxes,
@@ -25,8 +31,8 @@ import {
     selectRowValues,
     selectColumnValues,
     selectSquareValues,
-    selectSolving,
-    selectBoxesInputted
+    selectBoxesInputted,
+    selectCheckForGivensRounds
 } from "./board.selectors";
 
 export function* clearConflicts(box) {
@@ -170,7 +176,13 @@ export function* getPossibles(box) {
     return possibles;
 }
 
+export function* solvedBox(boxId, value) {
+    yield put(boxSolved(boxId, value));
+    yield put(increaseSolvedNumber());
+}
+
 export function* checkForGivens() {
+    yield put(increaseCheckForGivensRounds());
     let givensFound = false;
 
     console.log("checking for givens...");
@@ -185,6 +197,13 @@ export function* checkForGivens() {
         }
         const possibles = yield call(getPossibles, box);
         console.log("possibles in checkForGivens = ", possibles);
+        if (possibles.length === 1) {
+            const currGivensRounds = yield select(selectCheckForGivensRounds);
+            let given = `${box.row}-${box.column}(${currGivensRounds})`;
+            yield put(addBoxToCheckForGivensArray(given));
+            givensFound = true;
+            yield call(solvedBox, box.boxId, possibles[0]);
+        }
     }
 
     if (givensFound) {
@@ -205,11 +224,13 @@ export function* resetBoardToInputtedStart() {
             console.log("box ", box.boxId, " was solved.");
             yield put(updateBoxValue(box.boxId, 0));
             yield put(unsolveBox(box.boxId));
+            yield put(decreaseSolvedNumber(box.boxId));
         }
     }
 }
 
 export function* cycleSolveLogic() {
+    yield put(increaseLogicRounds());
     yield call(checkForGivens);
 }
 

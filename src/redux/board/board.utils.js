@@ -60,7 +60,6 @@ export const generateInitialState = () => {
         currObject[boxId] = {
             boxId: boxId,
             value: 0,
-            possibles: [1, 2, 3, 4, 5, 6, 7, 8, 9],
             row: getRowNumber(boxId),
             column: getColumnNumber(boxId),
             square: getSquareNumber(boxId),
@@ -83,7 +82,10 @@ export const generateInitialState = () => {
         errors: {},
         solving: false,
         boxesInputted: 0,
-        boxesSolved: 0
+        boxesSolved: 0,
+        logicRounds: 0,
+        checkForGivensRounds: 0,
+        checkForGivensArray: []
     }
 
     return boardState;
@@ -131,4 +133,8 @@ export const removeErrorFromBoard = (errors, boxIdToRemove) => {
 
 export const addConflictWithToBox = (conflicts, conflict) => {
     return [...conflicts, conflict];
+}
+
+export const addBoxToCheckForGivensArray = (givens, given) => {
+    return [...givens, given];
 }

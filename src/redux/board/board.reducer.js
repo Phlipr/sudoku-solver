@@ -1,7 +1,12 @@
 import { generateInitialState } from "./board.utils";
 import BoardActionTypes from "./board.types";
 
-import { addErrorToBoard, removeErrorFromBoard, addConflictWithToBox } from "./board.utils";
+import {
+    addErrorToBoard,
+    removeErrorFromBoard,
+    addConflictWithToBox,
+    addBoxToCheckForGivensArray
+} from "./board.utils";
 
 const INITIAL_STATE = generateInitialState();
 
@@ -157,6 +162,51 @@ const boxReducer = (state = INITIAL_STATE, action) => {
             return {
                 ...state,
                 boxesInputted: state.boxesInputted - 1
+            }
+        case BoardActionTypes.INCREASE_SOLVED_NUMBER:
+            return {
+                ...state,
+                boxesSolved: state.boxesSolved + 1
+            }
+        case BoardActionTypes.DECREASE_SOLVED_NUMBER:
+            return {
+                ...state,
+                boxesSolved: state.boxesSolved - 1
+            }
+        case BoardActionTypes.RESET_BOARD_TO_START:
+            return {
+                ...state,
+                logicRounds: 0,
+                checkForGivensRounds: 0,
+                checkForGivensArray: []
+            }
+        case BoardActionTypes.INCREASE_LOGIC_ROUNDS:
+            return {
+                ...state,
+                logicRounds: state.logicRounds + 1
+            }
+        case BoardActionTypes.INCREASE_CHECK_FOR_GIVENS_ROUNDS:
+            return {
+                ...state,
+                checkForGivensRounds: state.checkForGivensRounds + 1
+            }
+        case BoardActionTypes.ADD_BOX_TO_CHECK_FOR_GIVENS_ARRAY:
+            return {
+                ...state,
+                checkForGivensArray: addBoxToCheckForGivensArray(state.checkForGivensArray, action.given)
+            }
+        case BoardActionTypes.BOX_SOLVED:
+            return {
+                ...state,
+                boxes: {
+                    ...state.boxes,
+                    [action.boxId]: {
+                        ...state.boxes[action.boxId],
+                        solved: true,
+                        value: action.value,
+                        possibles: []
+                    }
+                }
             }
         default:
             return state;
