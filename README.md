@@ -1,3 +1,5 @@
+This has been a personal obsession of mine since the early 2000s, when I developed a similar program on my TI-82 calculator.  My goal was to create an application that would solve Sudoku puzzles using similar logic to what a human would use instead of the typical backtracking algorithm.  The goal was to decrease the O(n) from exponential to quadratic or linear if possible.  The code is a work in progress.  This will be the third iteration of this program.  The first, again, was for the TI-82.  The second was built in Java.  For this one, I decided to tackle the same problem using a web-based approach with React and Redux, utilizing the redux-saga package to perform the logic functions.
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
