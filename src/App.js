@@ -11,7 +11,9 @@ import {
   selectBoxesSolved,
   selectLogicRounds,
   selectCheckForGivensRounds,
-  selectCheckForGivensArray
+  selectCheckForGivensArray,
+  selectSlicingRounds,
+  selectSlicingArray
 } from './redux/board/board.selectors';
 import {
   resetBoard as resetBoardInRedux,
@@ -103,6 +105,8 @@ const App = () => {
   const logicRounds = useSelector(selectLogicRounds);
   const checkForGivensRounds = useSelector(selectCheckForGivensRounds);
   const checkforGivensArray = useSelector(selectCheckForGivensArray);
+  const slicingRounds = useSelector(selectSlicingRounds);
+  const slicingArray = useSelector(selectSlicingArray);
 
   const resetBoard = () => dispatch(resetBoardInRedux());
   const clearAllErrors = () => dispatch(clearAllErrorsInRedux());
@@ -173,9 +177,13 @@ const App = () => {
         <>
           <div>Logic Rounds: {logicRounds}</div>
           <div>CheckForGivens Rounds: {checkForGivensRounds}</div>
+          <div>Slicing Rounds: {slicingRounds}</div>
           <h2>CheckForGivens:</h2>
           <h5>Box Notation: row-column(CheckForGivens Round)</h5>
           <div>{checkforGivensArray.toString()}</div>
+          <h2>Slicing:</h2>
+          <h5>Box Notation: row-column(Slicing Round)</h5>
+          <div>{slicingArray.toString()}</div>
         </>
       }
     </Page>

@@ -85,7 +85,9 @@ export const generateInitialState = () => {
         boxesSolved: 0,
         logicRounds: 0,
         checkForGivensRounds: 0,
-        checkForGivensArray: []
+        checkForGivensArray: [],
+        slicingRounds: 0,
+        slicingArray: []
     }
 
     return boardState;
@@ -129,12 +131,16 @@ export const removeErrorFromBoard = (errors, boxIdToRemove) => {
     console.log("filteredErrors = ", filteredErrors);
 
     return filteredErrors;
-}
+};
 
 export const addConflictWithToBox = (conflicts, conflict) => {
     return [...conflicts, conflict];
-}
+};
 
 export const addBoxToCheckForGivensArray = (givens, given) => {
     return [...givens, given];
-}
+};
+
+export const addBoxToSlicedArray = (slices, sliced) => {
+    return [...slices, sliced];
+};

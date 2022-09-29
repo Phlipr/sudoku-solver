@@ -39,6 +39,16 @@ export const selectCheckForGivensArray = createSelector(
     board => board ? board.checkForGivensArray : []
 );
 
+export const selectSlicingRounds = createSelector(
+    [selectBoard],
+    board => board ? board.slicingRounds : 0
+);
+
+export const selectSlicingArray = createSelector(
+    [selectBoard],
+    board => board ? board.slicingArray : []
+);
+
 // Selectors related to boxes
 export const selectBoxes = createSelector(
     [selectBoard],

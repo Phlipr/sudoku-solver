@@ -121,6 +121,15 @@ export const addBoxToCheckForGivensArray = (given) => ({
     given
 });
 
+export const increaseSlicingRounds = () => ({
+    type: BoardActionTypes.INCREASE_SLICING_ROUNDS
+});
+
+export const addBoxToSlicedArray = (sliced) => ({
+    type: BoardActionTypes.ADD_BOX_TO_SLICED_ARRAY,
+    sliced
+});
+
 export const boxSolved = (boxId, value) => ({
     type: BoardActionTypes.BOX_SOLVED,
     boxId,

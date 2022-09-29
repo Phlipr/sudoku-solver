@@ -23,7 +23,9 @@ import {
     increaseCheckForGivensRounds,
     addBoxToCheckForGivensArray,
     boxSolved,
-    increaseSolvedNumber
+    increaseSolvedNumber,
+    increaseSlicingRounds,
+    addBoxToSlicedArray
 } from "./board.actions";
 import {
     selectBoxes,
@@ -32,7 +34,8 @@ import {
     selectColumnValues,
     selectSquareValues,
     selectBoxesInputted,
-    selectCheckForGivensRounds
+    selectCheckForGivensRounds,
+    selectSlicingRounds
 } from "./board.selectors";
 
 export function* clearConflicts(box) {
@@ -75,11 +78,70 @@ export function* checkForConflicts(valueToCheck, values, box) {
     return false;
 }
 
+export function* handleConflict(inputtedBox, conflictedBox, inputtedValue) {
+    const { boxId: inputtedBoxId, row: inputtedRow, column: inputtedColumn } = inputtedBox;
+    const { boxId: conflictedBoxId, row, column } = conflictedBox;
+
+    yield put(addConflictToBox(inputtedBoxId, conflictedBoxId));
+    yield put(addError({
+        boxId: inputtedBoxId,
+        errorMessage: `Putting the value ${inputtedValue} in box ${inputtedRow}-${inputtedColumn} would make it impossible to solve box ${row}-${column}.`
+    }));
+}
+
 export function* makesUnsolvable(inputtedBox, inputtedValue) {
     const boxesArray = yield call(getBoxesArray);
 
     const { row: inputtedRow, column: inputtedColumn, square: inputtedSquare } = inputtedBox;
 
+    let rowPossibles = {};
+    let columnPossibles = {};
+    let squarePossibles = {};
+
+    for (var i = 1; i < 10; i++) {
+        rowPossibles[i] = {
+            1: [],
+            2: [],
+            3: [],
+            4: [],
+            5: [],
+            6: [],
+            7: [],
+            8: [],
+            9: []
+        };
+        columnPossibles[i] = {
+            1: [],
+            2: [],
+            3: [],
+            4: [],
+            5: [],
+            6: [],
+            7: [],
+            8: [],
+            9: []
+        };
+        squarePossibles[i] = {
+            1: [],
+            2: [],
+            3: [],
+            4: [],
+            5: [],
+            6: [],
+            7: [],
+            8: [],
+            9: []
+        };
+    }
+
+    /** This block of code does two things;
+     *  1.) It determines if adding the inputtedValue to the inputtedBox will make it such that any of the boxes it affects
+     *      will not have any possible values.  If that is the case, this will make the puzzle unsolvable and a conflict
+     *      is added to the board.
+     *  2.) It builds the three objects initialized above.  These possible objects will be used to check for another type
+     *      of conflict in which a single box is the only possible place for multiple values, which makes the board
+     *      unsolvable.
+     */
     for (let box of boxesArray) {
         if ((box.value !== 0 && box.value !== '') || box.boxId === inputtedBox.boxId) {
             continue;
@@ -93,9 +155,60 @@ export function* makesUnsolvable(inputtedBox, inputtedValue) {
         }
 
         if (possibles.length === 0) {
-            yield put(addConflictToBox(inputtedBox.boxId, box.boxId));
-            yield put(addError({ boxId: inputtedBox.boxId, errorMessage: `Putting the value ${inputtedValue} in box ${inputtedRow}-${inputtedColumn} would make it impossible to solve box ${row}-${column}.` }))
+            yield call(handleConflict, inputtedBox, box, inputtedValue);
             return true;
+        } else {
+            for (let possible of possibles) {
+                rowPossibles[box.row][possible].push(box.boxId);
+                squarePossibles[box.square][possible].push(box.boxId);
+                columnPossibles[box.column][possible].push(box.boxId);
+            }
+        }
+    }
+
+    /** This block follows this logic:
+     *  If a possible value can only be placed in a single box within a row, column, or square, and another possible
+     *  can only be placed in that same box, then the inputted value would make this board unsolvable.
+     */
+    for (var j = 1; j < 10; j++) {
+        let currRow = rowPossibles[j];
+        let currColumn = columnPossibles[j];
+        let currSquare = squarePossibles[j];
+
+        const rowSet = new Set();
+        const columnSet = new Set();
+        const squareSet = new Set();
+
+        for (var k = 1; k < 10; k++) {
+            if (currRow[k].length === 1) {
+                if (rowSet.has(currRow[k][0])) {
+                    const conflictedBox = yield select(selectBox(currRow[k][0]));
+                    yield call(handleConflict, inputtedBox, conflictedBox, inputtedValue);
+                    return true;
+                } else {
+                    rowSet.add(currRow[k][0]);
+                }
+            }
+
+            if (currColumn[k].length === 1) {
+                if (columnSet.has(currColumn[k][0])) {
+                    const conflictedBox = yield select(selectBox(currColumn[k][0]));
+                    yield call(handleConflict, inputtedBox, conflictedBox, inputtedValue);
+                    return true;
+                } else {
+                    columnSet.add(currColumn[k][0]);
+                }
+            }
+
+            if (currSquare[k].length === 1) {
+                if (squareSet.has(currSquare[k][0])) {
+                    const conflictedBox = yield select(selectBox(currSquare[k][0]));
+                    yield call(handleConflict, inputtedBox, conflictedBox, inputtedValue);
+                    return true;
+                } else {
+                    squareSet.add(currSquare[k][0]);
+                }
+            }
         }
     }
 
@@ -185,18 +298,13 @@ export function* checkForGivens() {
     yield put(increaseCheckForGivensRounds());
     let givensFound = false;
 
-    console.log("checking for givens...");
-
     const boxesArray = yield call(getBoxesArray);
-
-    console.log("boxesArray = ", boxesArray);
 
     for (let box of boxesArray) {
         if (box.inputted || box.solved) {
             continue;
         }
         const possibles = yield call(getPossibles, box);
-        console.log("possibles in checkForGivens = ", possibles);
         if (possibles.length === 1) {
             const currGivensRounds = yield select(selectCheckForGivensRounds);
             let given = `${box.row}-${box.column}(${currGivensRounds})`;
@@ -211,17 +319,118 @@ export function* checkForGivens() {
     }
 }
 
+export function* foundSlice(boxId, value) {
+    const currSliceRounds = yield select(selectSlicingRounds);
+
+    const box = yield select(selectBox(boxId));
+
+    let sliced = `${box.row}-${box.column}(${currSliceRounds})`;
+
+    yield put(addBoxToSlicedArray(sliced));
+
+    yield call(solvedBox, box.boxId, value);
+}
+
+export function* slicePuzzle() {
+    yield put(increaseSlicingRounds());
+    let slicesSuccessful = false;
+
+    const boxesArray = yield call(getBoxesArray);
+
+    let rowPossibles = {};
+    let columnPossibles = {};
+    let squarePossibles = {};
+
+    for (var i = 1; i < 10; i++) {
+        rowPossibles[i] = {
+            1: [],
+            2: [],
+            3: [],
+            4: [],
+            5: [],
+            6: [],
+            7: [],
+            8: [],
+            9: []
+        };
+        columnPossibles[i] = {
+            1: [],
+            2: [],
+            3: [],
+            4: [],
+            5: [],
+            6: [],
+            7: [],
+            8: [],
+            9: []
+        };
+        squarePossibles[i] = {
+            1: [],
+            2: [],
+            3: [],
+            4: [],
+            5: [],
+            6: [],
+            7: [],
+            8: [],
+            9: []
+        };
+    }
+
+    for (let box of boxesArray) {
+        if (box.inputted || box.solved) {
+            continue;
+        }
+
+        const possibles = yield call(getPossibles, box);
+
+        for (let possible of possibles) {
+            rowPossibles[box.row][possible].push(box.boxId);
+            squarePossibles[box.square][possible].push(box.boxId);
+            columnPossibles[box.column][possible].push(box.boxId);
+        }
+    }
+
+    for (var j = 1; j < 10; j++) {
+        if (slicesSuccessful) break;
+
+        let currRow = rowPossibles[j];
+        let currColumn = columnPossibles[j];
+        let currSquare = squarePossibles[j];
+
+        for (var k = 1; k < 10; k++) {
+            if (currRow[k].length === 1) {
+                yield call(foundSlice, currRow[k], k);
+                slicesSuccessful = true;
+                break;
+            }
+
+            if (currColumn[k].length === 1) {
+                yield call(foundSlice, currColumn[k], k);
+                slicesSuccessful = true;
+                break;
+            }
+
+            if (currSquare[k].length === 1) {
+                yield call(foundSlice, currSquare[k], k);
+                slicesSuccessful = true;
+                break;
+            }
+        }
+    }
+
+    if (slicesSuccessful) {
+        yield call(slicePuzzle);
+    }
+}
+
 export function* resetBoardToInputtedStart() {
-    console.log("resetting board to start...");
     yield put(stopSolving());
 
     const boxesArray = yield call(getBoxesArray);
 
-    console.log("boxesArray = ", boxesArray);
-
     for (let box of boxesArray) {
         if (box.solved) {
-            console.log("box ", box.boxId, " was solved.");
             yield put(updateBoxValue(box.boxId, 0));
             yield put(unsolveBox(box.boxId));
             yield put(decreaseSolvedNumber(box.boxId));
@@ -232,6 +441,7 @@ export function* resetBoardToInputtedStart() {
 export function* cycleSolveLogic() {
     yield put(increaseLogicRounds());
     yield call(checkForGivens);
+    yield call(slicePuzzle);
 }
 
 export function* onValidateBoxValue() {

@@ -5,7 +5,8 @@ import {
     addErrorToBoard,
     removeErrorFromBoard,
     addConflictWithToBox,
-    addBoxToCheckForGivensArray
+    addBoxToCheckForGivensArray,
+    addBoxToSlicedArray
 } from "./board.utils";
 
 const INITIAL_STATE = generateInitialState();
@@ -194,6 +195,16 @@ const boxReducer = (state = INITIAL_STATE, action) => {
             return {
                 ...state,
                 checkForGivensArray: addBoxToCheckForGivensArray(state.checkForGivensArray, action.given)
+            }
+        case BoardActionTypes.INCREASE_SLICING_ROUNDS:
+            return {
+                ...state,
+                slicingRounds: state.slicingRounds + 1
+            }
+        case BoardActionTypes.ADD_BOX_TO_SLICED_ARRAY:
+            return {
+                ...state,
+                slicingArray: addBoxToSlicedArray(state.slicingArray, action.sliced)
             }
         case BoardActionTypes.BOX_SOLVED:
             return {
