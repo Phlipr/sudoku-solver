@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 
-import Box from "./box.component";
+import Box from "./box/box.component";
 
 const SquareContainer = styled.div`
     display: grid;
