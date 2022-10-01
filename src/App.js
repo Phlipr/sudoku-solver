@@ -1,9 +1,12 @@
-import './App.css';
+// base imports
 import React from "react";
 import { useSelector, useDispatch } from 'react-redux';
-import styled from "styled-components";
 
+// components and constants imports
 import Row from './components/row/row.component';
+import { BOARD_ORDER } from "./constants.js";
+
+// Redux actions and selectors imports
 import {
   selectBoxesInputted,
   selectErrors,
@@ -22,99 +25,53 @@ import {
   resetBoardToStart as resetBoardToStartInRedux
 } from './redux/board/board.actions';
 
-const Board = styled.div`
-  align-items: center;
-`;
-
-const Title = styled.h1`
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-`;
-
-const BoxNumbers = styled.h2`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-
-  & span {
-    margin: 0 15px;
-  }
-
-  & progress {
-    margin-left: 10px;
-    margin-top: 7px;
-  }
-
-  & label {
-    margin-left: 20px;
-  }
-`;
-
-const Page = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-`;
-
-const Error = styled.div`
-  color: red
-`;
-
-const ErrorTitle = styled.h2`
-  color: red;
-  font-weight: bold;
-  margin-bottom: 0;
-`;
-
-const ErrorSubTitle = styled.h3`
-  color: red;
-  font-weight: bold;
-  margin-bottom: 0;
-  margin-top: 0;
-`;
-
-const StyledButton = styled.button`
-  border: 2px solid black;
-  border-radius: 5px;
-  background-color: ${({ bgColor = "lightblue" }) => bgColor};
-  color: black;
-  margin: 5px;
-  font-size: 25px;
-  font-weight: bold;
-
-  &:hover {
-    background-color: white;
-    color: ${({ bgColor = "lightblue" }) => bgColor};
-  }
-`;
-
-const ButtonContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  margin: 15px;
-`;
+// style imports
+import {
+  Board,
+  Page,
+  Title,
+  StyledButton,
+  ButtonContainer,
+  BoxNumbers,
+  Error,
+  ErrorTitle,
+  ErrorSubTitle
+} from './App.styles.js';
 
 const App = () => {
-  const dispatch = useDispatch();
-  const errors = useSelector(selectErrors);
-  const solvingPuzzle = useSelector(selectSolving);
+  // Redux selectors
   const boxesInputted = useSelector(selectBoxesInputted);
   const boxesSolved = useSelector(selectBoxesSolved);
-  const errorsArray = Object.entries(errors);
-  const logicRounds = useSelector(selectLogicRounds);
   const checkForGivensRounds = useSelector(selectCheckForGivensRounds);
   const checkforGivensArray = useSelector(selectCheckForGivensArray);
+  const errors = useSelector(selectErrors);
+  const logicRounds = useSelector(selectLogicRounds);
   const slicingRounds = useSelector(selectSlicingRounds);
   const slicingArray = useSelector(selectSlicingArray);
+  const solvingPuzzle = useSelector(selectSolving);
 
-  const resetBoard = () => dispatch(resetBoardInRedux());
+  // Redux actions
+  const dispatch = useDispatch();
+
   const clearAllErrors = () => dispatch(clearAllErrorsInRedux());
-  const saveBoardInputs = () => dispatch(saveBoardInputsInRedux());
+  const resetBoard = () => dispatch(resetBoardInRedux());
   const resetBoardToStart = () => dispatch(resetBoardToStartInRedux());
+  const saveBoardInputs = () => dispatch(saveBoardInputsInRedux());
+
+  // Display variables  
+  const errorsArray = Object.entries(errors);
 
   console.log("errorsArray = ", errorsArray);
   console.log("errors = ", errors);
+
+  const renderRows = () => {
+    let rows = [];
+    for (let i = 0; i < BOARD_ORDER; i++) {
+      rows.push(<Row id={i + 1} key={i + 1} />);
+    }
+
+    return rows;
+  };
 
   return (
     <Page>
@@ -136,9 +93,9 @@ const App = () => {
         <progress id="solved" value={(boxesInputted + boxesSolved) / 81 * 100} max="100"></progress>
       </BoxNumbers>
       <Board>
-        <Row id={1} />
-        <Row id={2} />
-        <Row id={3} />
+        {
+          renderRows()
+        }
       </Board>
       {errorsArray.length > 0 &&
         <>
