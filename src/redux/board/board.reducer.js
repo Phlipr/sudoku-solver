@@ -11,7 +11,7 @@ import {
 
 const INITIAL_STATE = generateInitialState();
 
-const boxReducer = (state = INITIAL_STATE, action) => {
+const boardReducer = (state = INITIAL_STATE, action) => {
     switch (action.type) {
         // actions related to resetting board
         case BoardActionTypes.RESET_BOARD:
@@ -237,4 +237,4 @@ const boxReducer = (state = INITIAL_STATE, action) => {
     }
 }
 
-export default boxReducer;
+export default boardReducer;
