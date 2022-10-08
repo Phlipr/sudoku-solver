@@ -1,12 +1,15 @@
 import styled from "styled-components";
 
+import { BOARD_ORDER } from "./constants";
+
 // High-level styles
 export const Board = styled.div`
   align-items: center;
+  margin-left: ${BOARD_ORDER > 5 ? "10px" : "none"};
 `;
 
 export const Page = styled.div`
-  align-items: center;
+  align-items: ${BOARD_ORDER > 5 ? "start" : "center"};
   display: flex;
   flex-direction: column;
 `;
@@ -16,6 +19,7 @@ export const Title = styled.h1`
   justify-content: center;
   align-items: center;
   text-align: center;
+  margin-left: ${BOARD_ORDER > 5 ? "10px" : "none"};
 `;
 
 export const StyledButton = styled.button`
