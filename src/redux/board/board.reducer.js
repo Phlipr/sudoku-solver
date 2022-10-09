@@ -1,7 +1,11 @@
-import { generateInitialState } from "./board.utils";
-import BoardActionTypes from "./board.types";
+import BoardActionTypes from "./action-types/board.types";
+import BoardErrorActionTypes from "./action-types/boardError.types";
+import BoardStatActionTypes from "./action-types/boardStat.types";
+import BoxActionTypes from "./action-types/box.types";
+import BoxErrorActionTypes from "./action-types/boxError.types";
 
 import {
+    generateInitialState,
     addErrorToBoard,
     removeErrorFromBoard,
     addConflictWithToBox,
@@ -29,17 +33,17 @@ const boardReducer = (state = INITIAL_STATE, action) => {
             }
 
         // actions related to error state of board
-        case BoardActionTypes.ADD_ERROR:
+        case BoardErrorActionTypes.ADD_ERROR:
             return {
                 ...state,
                 errors: addErrorToBoard(state.errors, action.error)
             }
-        case BoardActionTypes.CLEAR_ERROR:
+        case BoardErrorActionTypes.CLEAR_ERROR:
             return {
                 ...state,
                 errors: removeErrorFromBoard(state.errors, action.boxId)
             }
-        case BoardActionTypes.CLEAR_ALL_ERRORS:
+        case BoardErrorActionTypes.CLEAR_ALL_ERRORS:
             return {
                 ...state,
                 errors: {}
@@ -58,54 +62,54 @@ const boardReducer = (state = INITIAL_STATE, action) => {
             }
 
         // actions related to board stats
-        case BoardActionTypes.INCREASE_INPUTTED_NUMBER:
+        case BoardStatActionTypes.INCREASE_INPUTTED_NUMBER:
             return {
                 ...state,
                 boxesInputted: state.boxesInputted + 1
             }
-        case BoardActionTypes.DECREASE_INPUTTED_NUMBER:
+        case BoardStatActionTypes.DECREASE_INPUTTED_NUMBER:
             return {
                 ...state,
                 boxesInputted: state.boxesInputted - 1
             }
-        case BoardActionTypes.INCREASE_SOLVED_NUMBER:
+        case BoardStatActionTypes.INCREASE_SOLVED_NUMBER:
             return {
                 ...state,
                 boxesSolved: state.boxesSolved + 1
             }
-        case BoardActionTypes.DECREASE_SOLVED_NUMBER:
+        case BoardStatActionTypes.DECREASE_SOLVED_NUMBER:
             return {
                 ...state,
                 boxesSolved: state.boxesSolved - 1
             }
-        case BoardActionTypes.INCREASE_LOGIC_ROUNDS:
+        case BoardStatActionTypes.INCREASE_LOGIC_ROUNDS:
             return {
                 ...state,
                 logicRounds: state.logicRounds + 1
             }
-        case BoardActionTypes.INCREASE_CHECK_FOR_GIVENS_ROUNDS:
+        case BoardStatActionTypes.INCREASE_CHECK_FOR_GIVENS_ROUNDS:
             return {
                 ...state,
                 checkForGivensRounds: state.checkForGivensRounds + 1
             }
-        case BoardActionTypes.ADD_BOX_TO_CHECK_FOR_GIVENS_ARRAY:
+        case BoardStatActionTypes.ADD_BOX_TO_CHECK_FOR_GIVENS_ARRAY:
             return {
                 ...state,
                 checkForGivensArray: addBoxToCheckForGivensArray(state.checkForGivensArray, action.given)
             }
-        case BoardActionTypes.INCREASE_SLICING_ROUNDS:
+        case BoardStatActionTypes.INCREASE_SLICING_ROUNDS:
             return {
                 ...state,
                 slicingRounds: state.slicingRounds + 1
             }
-        case BoardActionTypes.ADD_BOX_TO_SLICED_ARRAY:
+        case BoardStatActionTypes.ADD_BOX_TO_SLICED_ARRAY:
             return {
                 ...state,
                 slicingArray: addBoxToSlicedArray(state.slicingArray, action.sliced)
             }
 
         // actions related to updating box state
-        case BoardActionTypes.UPDATE_BOX_VALUE:
+        case BoxActionTypes.UPDATE_BOX_VALUE:
             return {
                 ...state,
                 boxes: {
@@ -116,7 +120,7 @@ const boardReducer = (state = INITIAL_STATE, action) => {
                     }
                 }
             }
-        case BoardActionTypes.ADD_ERROR_TO_BOX:
+        case BoxErrorActionTypes.ADD_ERROR_TO_BOX:
             return {
                 ...state,
                 boxes: {
@@ -127,7 +131,7 @@ const boardReducer = (state = INITIAL_STATE, action) => {
                     }
                 }
             }
-        case BoardActionTypes.CLEAR_ALL_ERRORS_FROM_BOX:
+        case BoxErrorActionTypes.CLEAR_ALL_ERRORS_FROM_BOX:
             return {
                 ...state,
                 boxes: {
@@ -140,7 +144,7 @@ const boardReducer = (state = INITIAL_STATE, action) => {
                     }
                 }
             }
-        case BoardActionTypes.CLEAR_ERROR_FROM_BOX:
+        case BoxErrorActionTypes.CLEAR_ERROR_FROM_BOX:
             return {
                 ...state,
                 boxes: {
@@ -151,7 +155,7 @@ const boardReducer = (state = INITIAL_STATE, action) => {
                     }
                 }
             }
-        case BoardActionTypes.ADD_CONFLICT_TO_BOX:
+        case BoxErrorActionTypes.ADD_CONFLICT_TO_BOX:
             return {
                 ...state,
                 boxes: {
@@ -168,7 +172,7 @@ const boardReducer = (state = INITIAL_STATE, action) => {
                     }
                 }
             }
-        case BoardActionTypes.CLEAR_FROM_HAS_CONFLICTS:
+        case BoxErrorActionTypes.CLEAR_FROM_HAS_CONFLICTS:
             return {
                 ...state,
                 boxes: {
@@ -183,7 +187,7 @@ const boardReducer = (state = INITIAL_STATE, action) => {
                     }
                 }
             }
-        case BoardActionTypes.CLEAR_HAS_CONFLICTS:
+        case BoxErrorActionTypes.CLEAR_HAS_CONFLICTS:
             return {
                 ...state,
                 boxes: {
@@ -194,7 +198,7 @@ const boardReducer = (state = INITIAL_STATE, action) => {
                     }
                 }
             }
-        case BoardActionTypes.SAVE_BOX_AS_INPUTTED:
+        case BoxActionTypes.SAVE_BOX_AS_INPUTTED:
             return {
                 ...state,
                 boxes: {
@@ -206,7 +210,7 @@ const boardReducer = (state = INITIAL_STATE, action) => {
 
                 }
             }
-        case BoardActionTypes.UNSOLVE_BOX:
+        case BoxActionTypes.UNSOLVE_BOX:
             return {
                 ...state,
                 boxes: {
@@ -217,7 +221,7 @@ const boardReducer = (state = INITIAL_STATE, action) => {
                     }
                 }
             }
-        case BoardActionTypes.BOX_SOLVED:
+        case BoxActionTypes.BOX_SOLVED:
             return {
                 ...state,
                 boxes: {

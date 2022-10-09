@@ -20,10 +20,12 @@ import {
 } from './redux/board/board.selectors';
 import {
   resetBoard as resetBoardInRedux,
-  clearAllErrors as clearAllErrorsInRedux,
   saveBoardInputs as saveBoardInputsInRedux,
   resetBoardToStart as resetBoardToStartInRedux
-} from './redux/board/board.actions';
+} from './redux/board/actions/board.actions';
+import {
+  clearAllErrors as clearAllErrorsInRedux
+} from './redux/board/actions/boardError.actions'
 
 // style imports
 import {
