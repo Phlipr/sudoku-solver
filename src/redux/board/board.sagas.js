@@ -1,32 +1,41 @@
 import { all, call, takeLatest, put, select, race, take } from "redux-saga/effects";
 
-import BoardActionTypes from "./board.types";
+import BoardActionTypes from "./action-types/board.types";
+import BoxActionTypes from "./action-types/box.types";
 import {
-    addError,
+    boardStartSaved,
+    stopSolving,
+    solvePuzzle
+} from "./actions/board.actions";
+import {
     updateBoxValue,
-    clearError,
+    saveBoxAsInputted,
+    unsolveBox,
+    boxSolved
+} from "./actions/box.actions"
+import {
     addErrorToBox,
     clearErrorFromBox,
     clearAllErrorsFromBox,
     addConflictToBox,
     clearFromHasConflicts,
     clearHasConflicts,
-    saveBoxAsInputted,
-    boardStartSaved,
-    stopSolving,
-    unsolveBox,
-    solvePuzzle,
+} from "./actions/boxError.actions"
+import {
+    addError,
+    clearError,
+} from "./actions/boardError.actions"
+import {
     decreaseInputtedNumber,
     increaseInputtedNumber,
     decreaseSolvedNumber,
     increaseLogicRounds,
     increaseCheckForGivensRounds,
     addBoxToCheckForGivensArray,
-    boxSolved,
     increaseSolvedNumber,
     increaseSlicingRounds,
     addBoxToSlicedArray
-} from "./board.actions";
+} from "./actions/boardStat.actions"
 import {
     selectBoxes,
     selectBox,
@@ -445,7 +454,7 @@ export function* cycleSolveLogic() {
 }
 
 export function* onValidateBoxValue() {
-    yield takeLatest(BoardActionTypes.VALIDATE_BOX_VALUE, validateBoxValue);
+    yield takeLatest(BoxActionTypes.VALIDATE_BOX_VALUE, validateBoxValue);
 }
 
 export function* onClearAllErrors() {
