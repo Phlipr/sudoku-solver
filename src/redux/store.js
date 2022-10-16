@@ -1,11 +1,11 @@
-import { createStore, applyMiddleware } from "redux";
+import { configureStore } from "@reduxjs/toolkit";
 import logger from "redux-logger";
-import createMiddleware from "redux-saga";
+import createSagaMiddleware from "redux-saga";
 
-import rootReducer from "./root-reducer";
+import boardReducer from "./board/board.reducer"
 import rootSaga from "./root.saga";
 
-const sagaMiddleware = createMiddleware();
+const sagaMiddleware = createSagaMiddleware();
 
 const middlewares = [sagaMiddleware];
 
@@ -13,6 +13,13 @@ if (process.env.NODE_ENV === "development") {
     middlewares.push(logger);
 }
 
-export const store = createStore(rootReducer, applyMiddleware(...middlewares));
+const store = configureStore({
+    reducer: {
+        board: boardReducer
+    },
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware({ thunk: false }).concat(middlewares)
+});
 
 sagaMiddleware.run(rootSaga);
+
+export default store;

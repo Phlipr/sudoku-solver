@@ -1,6 +1,7 @@
 import { all, call, takeLatest, put, select, race, take } from "redux-saga/effects";
 
 import BoardActionTypes from "./action-types/board.types";
+import BoardErrorActionTypes from "./action-types/boardError.types";
 import BoxActionTypes from "./action-types/box.types";
 import {
     boardStartSaved,
@@ -458,7 +459,7 @@ export function* onValidateBoxValue() {
 }
 
 export function* onClearAllErrors() {
-    yield takeLatest(BoardActionTypes.CLEAR_ALL_ERRORS, clearAllErrorsFromBoxes);
+    yield takeLatest(BoardErrorActionTypes.CLEAR_ALL_ERRORS, clearAllErrorsFromBoxes);
 }
 
 export function* onSaveBoardInputs() {
