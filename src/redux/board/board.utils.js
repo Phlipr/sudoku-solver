@@ -136,12 +136,12 @@ export const addErrorToBoard = (errors, error) => {
     console.log("addErrorToBoard...");
     console.log("errors = ", errors);
     console.log("error = ", error);
-    errors = {
+    let newErrors = {
         ...errors,
         [error.boxId]: error.errorMessage
     };
 
-    return errors;
+    return newErrors;
 };
 
 export const removeErrorFromBoard = (errors, boxIdToRemove) => {
