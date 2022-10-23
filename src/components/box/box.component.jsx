@@ -2,7 +2,7 @@ import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 import { selectBox } from "../../redux/board/board.selectors";
-import { validateBoxValue } from "../../redux/board/actions/box.actions";
+import { validateBoxValue } from "../../redux/board/saga.actions";
 
 import { BoxContainer } from "./box.styles";
 

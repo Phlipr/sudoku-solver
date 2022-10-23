@@ -87,6 +87,8 @@ export const generateInitialState = () => {
     let columnState = {};
     let squareState = {};
 
+    // containers for quick lookup of which boxIds
+    //   are in whicih row, column, and state
     for (var i = 1; i < TOTAL_BOXES_PER_SQUARE + 1; i++) {
         rowState[i] = [];
         columnState[i] = [];
@@ -132,33 +134,12 @@ export const generateInitialState = () => {
     return boardState;
 };
 
-export const addErrorToBoard = (errors, error) => {
-    console.log("addErrorToBoard...");
-    console.log("errors = ", errors);
-    console.log("error = ", error);
-    let newErrors = {
-        ...errors,
-        [error.boxId]: error.errorMessage
-    };
-
-    return newErrors;
-};
-
 export const removeErrorFromBoard = (errors, boxIdToRemove) => {
-    console.log("removeErrorFromBoard...");
-    console.log("errors = ", errors);
-    console.log("boxIdToRevmove = ", boxIdToRemove);
-
     let errorsArray = Object.entries(errors);
 
-    console.log("errorsArray = ", errorsArray);
-
     let filteredErrors = errorsArray.reduce((currObj, error) => {
-        console.log("currObj = ", currObj);
-        console.log("error = ", error);
 
         if (error[0] === boxIdToRemove) {
-            console.log("current error matches boxIdToRemove");
             return currObj;
         }
 
@@ -167,19 +148,5 @@ export const removeErrorFromBoard = (errors, boxIdToRemove) => {
         return currObj;
     }, {});
 
-    console.log("filteredErrors = ", filteredErrors);
-
     return filteredErrors;
-};
-
-export const addConflictWithToBox = (conflicts, conflict) => {
-    return [...conflicts, conflict];
-};
-
-export const addBoxToCheckForGivensArray = (givens, given) => {
-    return [...givens, given];
-};
-
-export const addBoxToSlicedArray = (slices, sliced) => {
-    return [...slices, sliced];
 };

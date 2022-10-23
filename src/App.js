@@ -19,13 +19,13 @@ import {
   selectSlicingArray
 } from './redux/board/board.selectors';
 import {
-  resetBoard as resetBoardInRedux,
-  saveBoardInputs as saveBoardInputsInRedux,
-  resetBoardToStart as resetBoardToStartInRedux
-} from './redux/board/actions/board.actions';
+  saveBoardInputs as saveBoardInputsInRedux
+} from './redux/board/saga.actions';
 import {
-  clearAllErrors as clearAllErrorsInRedux
-} from './redux/board/actions/boardError.actions'
+  resetBoard as resetBoardInRedux,
+  clearAllErrors as clearAllErrorsInRedux,
+  resetBoardToStart as resetBoardToStartInRedux
+} from './redux/board/board.slice'
 
 // style imports
 import {
@@ -62,9 +62,6 @@ const App = () => {
 
   // Display variables  
   const errorsArray = Object.entries(errors);
-
-  console.log("errorsArray = ", errorsArray);
-  console.log("errors = ", errors);
 
   const renderRows = () => {
     let rows = [];

@@ -1,32 +1,17 @@
 import { all, call, takeLatest, put, select, race, take } from "redux-saga/effects";
 
-import BoardActionTypes from "./action-types/board.types";
-import BoardErrorActionTypes from "./action-types/boardError.types";
-import BoxActionTypes from "./action-types/box.types";
+import SagaActionTypes from "./saga.action-types";
 import {
     boardStartSaved,
     stopSolving,
-    solvePuzzle
-} from "./actions/board.actions";
-import {
-    updateBoxValue,
-    saveBoxAsInputted,
-    unsolveBox,
-    boxSolved
-} from "./actions/box.actions"
-import {
     addErrorToBox,
     clearErrorFromBox,
     clearAllErrorsFromBox,
     addConflictToBox,
     clearFromHasConflicts,
     clearHasConflicts,
-} from "./actions/boxError.actions"
-import {
-    addError,
-    clearError,
-} from "./actions/boardError.actions"
-import {
+    addErrorToBoard as addError,
+    clearErrorFromBoard as clearError,
     decreaseInputtedNumber,
     increaseInputtedNumber,
     decreaseSolvedNumber,
@@ -35,8 +20,15 @@ import {
     addBoxToCheckForGivensArray,
     increaseSolvedNumber,
     increaseSlicingRounds,
-    addBoxToSlicedArray
-} from "./actions/boardStat.actions"
+    addBoxToSlicingArray as addBoxToSlicedArray,
+    updateBoxValue,
+    saveBoxAsInputted,
+    boxSolved,
+    unsolveBox
+} from "./board.slice";
+import {
+    solvePuzzle
+} from "./saga.actions"
 import {
     selectBoxes,
     selectBox,
@@ -455,27 +447,27 @@ export function* cycleSolveLogic() {
 }
 
 export function* onValidateBoxValue() {
-    yield takeLatest(BoxActionTypes.VALIDATE_BOX_VALUE, validateBoxValue);
+    yield takeLatest(SagaActionTypes.VALIDATE_BOX_VALUE, validateBoxValue);
 }
 
 export function* onClearAllErrors() {
-    yield takeLatest(BoardErrorActionTypes.CLEAR_ALL_ERRORS, clearAllErrorsFromBoxes);
+    yield takeLatest("board/clearAllErrors", clearAllErrorsFromBoxes);
 }
 
 export function* onSaveBoardInputs() {
-    yield takeLatest(BoardActionTypes.SAVE_BOARD_INPUTS, saveBoardStart);
+    yield takeLatest(SagaActionTypes.SAVE_BOARD_INPUTS, saveBoardStart);
 }
 
 export function* onResetBoardToStart() {
-    yield takeLatest(BoardActionTypes.RESET_BOARD_TO_START, resetBoardToInputtedStart);
+    yield takeLatest("board/resetBoardToStart", resetBoardToInputtedStart);
 }
 
 export function* onSolvePuzzle() {
     while (true) {
-        yield take(BoardActionTypes.SOLVE_PUZZLE);
+        yield take(SagaActionTypes.SOLVE_PUZZLE);
         yield race({
             task: call(cycleSolveLogic),
-            cancel: take(BoardActionTypes.STOP_SOLVING)
+            cancel: take("board/stopSolving")
         });
     }
 }

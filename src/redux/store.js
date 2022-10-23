@@ -2,7 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import logger from "redux-logger";
 import createSagaMiddleware from "redux-saga";
 
-import boardReducer from "./board/board.reducer"
+import boardReducer from "./board/board.slice"
 import rootSaga from "./root.saga";
 
 const sagaMiddleware = createSagaMiddleware();

@@ -1,16 +1,16 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { generateInitialState, addErrorToBoard, removeErrorFromBoard } from "./board.utils";
+import { generateInitialState, removeErrorFromBoard } from "./board.utils";
 
-const INITIAL_STATE = generateInitialState();
+const initialState = generateInitialState();
 
 const boardSlice = createSlice({
     name: 'board',
-    INITIAL_STATE,
+    initialState,
     reducers: {
         // actions related to resetting board
-        resetBoard(state) {
-            state = INITIAL_STATE;
+        resetBoard() {
+            return initialState;
         },
         resetBoardToStart(state) {
             state.logicRounds = 0;
@@ -21,7 +21,11 @@ const boardSlice = createSlice({
         },
         // actions related to error state of board
         addErrorToBoard(state, action) {
-            state.errors = addErrorToBoard(state.errors, action.payload);
+            const { boxId, errorMessage } = action.payload;
+            state.errors = {
+                ...state.errors,
+                [boxId]: errorMessage
+            };
         },
         clearErrorFromBoard(state, action) {
             state.errors = removeErrorFromBoard(state.errors, action.payload);
@@ -72,8 +76,10 @@ const boardSlice = createSlice({
             },
             prepare(boxId, value) {
                 return {
-                    boxId,
-                    value
+                    payload: {
+                        boxId,
+                        value
+                    }
                 };
             }
         },
@@ -101,8 +107,10 @@ const boardSlice = createSlice({
             },
             prepare(boxIdWithConflict, boxIdCausingConflict) {
                 return {
-                    boxIdWithConflict,
-                    boxIdCausingConflict
+                    payload: {
+                        boxIdWithConflict,
+                        boxIdCausingConflict
+                    }
                 };
             }
         },
@@ -116,8 +124,10 @@ const boardSlice = createSlice({
             },
             prepare(boxIdWithConflict, boxIdToClear) {
                 return {
-                    boxIdWithConflict,
-                    boxIdToClear
+                    payload: {
+                        boxIdWithConflict,
+                        boxIdToClear
+                    }
                 };
             }
         },
@@ -141,8 +151,10 @@ const boardSlice = createSlice({
             },
             prepare(boxId, value) {
                 return {
-                    boxId,
-                    value
+                    payload: {
+                        boxId,
+                        value
+                    }
                 };
             }
         }
