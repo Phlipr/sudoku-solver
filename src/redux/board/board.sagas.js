@@ -40,16 +40,17 @@ import {
     selectSlicingRounds
 } from "./board.selectors";
 
-export function* clearConflicts(box) {
-    const { boxId, hasConflictWith } = yield box;
+// START: Shared Logic
 
-    for (let boxIdWithConflict of hasConflictWith) {
-        yield put(clearFromHasConflicts(boxIdWithConflict, boxId));
-    }
+// Returns an array of boxIds
+export function* getBoxesArray() {
+    const boxes = yield select(selectBoxes);
 
-    yield put(clearHasConflicts(boxId));
+    return Object.values(boxes);
 }
 
+//  This function returns a list of all values currently inputted
+//    along with the boxIds where those values are located
 export function* getValuesToCheck(box) {
     const { row, square, column } = box;
 
@@ -62,6 +63,53 @@ export function* getValuesToCheck(box) {
     return valuesToCheck;
 }
 
+//  Logic: given the values inputted already, which values can be put
+//           in this box
+export function* getPossibles(box) {
+    const valuesToCheck = yield call(getValuesToCheck, box);
+
+    const valuesTaken = Object.keys(valuesToCheck);
+
+    let possibles = [];
+
+    for (var i = 1; i < 10; i++) {
+        if (!valuesTaken.includes(i.toString())) {
+            possibles.push(i);
+        }
+    }
+
+    return possibles;
+}
+
+// END: Shared Logic
+
+// START: Input Valid Box Value
+
+export function* clearConflicts(box) {
+    const { boxId, hasConflictWith } = yield box;
+
+    for (let boxIdWithConflict of hasConflictWith) {
+        yield put(clearFromHasConflicts(boxIdWithConflict, boxId));
+    }
+
+    yield put(clearHasConflicts(boxId));
+}
+
+export function* clearAllErrorsFromBoxes() {
+    const boxesArray = yield call(getBoxesArray);
+
+    for (let box of boxesArray) {
+        yield put(clearAllErrorsFromBox(box.boxId));
+    }
+}
+
+// END: Input Valid Box Value
+
+// START: Check If Inputted Value Is Valid
+
+//  Logic: if the inputted value conflicts with an already inputted value
+//           it adds a conflict to the appropriate boxes and adds an error
+//           to the board
 export function* checkForConflicts(valueToCheck, values, box) {
 
     const { row, column, boxId } = box;
@@ -246,19 +294,9 @@ export function* validateBoxValue({ boxId, value }) {
     }
 }
 
-export function* getBoxesArray() {
-    const boxes = yield select(selectBoxes);
+// END: Check If Inputted Value Is Valid
 
-    return Object.values(boxes);
-}
-
-export function* clearAllErrorsFromBoxes() {
-    const boxesArray = yield call(getBoxesArray);
-
-    for (let box of boxesArray) {
-        yield put(clearAllErrorsFromBox(box.boxId));
-    }
-}
+// START: Setup for Solving Puzzle
 
 export function* saveBoardStart() {
 
@@ -275,21 +313,9 @@ export function* saveBoardStart() {
     yield put(solvePuzzle());
 }
 
-export function* getPossibles(box) {
-    const valuesToCheck = yield call(getValuesToCheck, box);
+// END: Setup for Solving Puzzle
 
-    const valuesTaken = Object.keys(valuesToCheck);
-
-    let possibles = [];
-
-    for (var i = 1; i < 10; i++) {
-        if (!valuesTaken.includes(i.toString())) {
-            possibles.push(i);
-        }
-    }
-
-    return possibles;
-}
+// START: Solving the Puzzle
 
 export function* solvedBox(boxId, value) {
     yield put(boxSolved(boxId, value));
@@ -321,6 +347,9 @@ export function* checkForGivens() {
     }
 }
 
+// start: logic for slicing rounds
+//      In this logic: if there is only one box in a row, column, or square to put a value
+//        then, that value must go in that box
 export function* foundSlice(boxId, value) {
     const currSliceRounds = yield select(selectSlicingRounds);
 
@@ -425,7 +454,18 @@ export function* slicePuzzle() {
         yield call(slicePuzzle);
     }
 }
+// end: logic for slicing rounds
 
+// This function drives the solving logic
+export function* cycleSolveLogic() {
+    yield put(increaseLogicRounds());
+    yield call(checkForGivens);
+    yield call(slicePuzzle);
+}
+
+// END: Solving the Puzzle
+
+// resetting board
 export function* resetBoardToInputtedStart() {
     yield put(stopSolving());
 
@@ -440,12 +480,7 @@ export function* resetBoardToInputtedStart() {
     }
 }
 
-export function* cycleSolveLogic() {
-    yield put(increaseLogicRounds());
-    yield call(checkForGivens);
-    yield call(slicePuzzle);
-}
-
+// start: action listeners
 export function* onValidateBoxValue() {
     yield takeLatest(SagaActionTypes.VALIDATE_BOX_VALUE, validateBoxValue);
 }
@@ -471,6 +506,7 @@ export function* onSolvePuzzle() {
         });
     }
 }
+// end: action listeners
 
 export function* boardSagas() {
     yield all([call(onValidateBoxValue), call(onClearAllErrors), call(onSaveBoardInputs), call(onResetBoardToStart), call(onSolvePuzzle)]);
