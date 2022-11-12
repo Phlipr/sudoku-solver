@@ -63,16 +63,16 @@ export const selectBox = memoize((boxId) =>
 );
 
 // Selectors related to rows
-const selectRows = createSelector(
+const selectRowIds = createSelector(
     [selectBoard],
-    board => board.rows
+    board => board.rowIds
 );
 
 export const selectRowValues = memoize((row) =>
     createSelector(
-        [selectRows, selectBoxes],
-        (rows, boxes) => {
-            let boxIdsInRow = rows[row];
+        [selectRowIds, selectBoxes],
+        (rowIds, boxes) => {
+            let boxIdsInRow = rowIds[row];
 
             return boxIdsInRow.reduce((currObj, boxId) => {
                 let value = boxes[boxId].value;
@@ -88,16 +88,16 @@ export const selectRowValues = memoize((row) =>
 );
 
 // Selectors related to columns
-const selectColumns = createSelector(
+const selectColumnIds = createSelector(
     [selectBoard],
-    board => board.columns
+    board => board.columnIds
 );
 
 export const selectColumnValues = memoize((column) =>
     createSelector(
-        [selectColumns, selectBoxes],
-        (columns, boxes) => {
-            let boxIdsInColumn = columns[column];
+        [selectColumnIds, selectBoxes],
+        (columnIds, boxes) => {
+            let boxIdsInColumn = columnIds[column];
 
             return boxIdsInColumn.reduce((currObj, boxId) => {
                 let value = boxes[boxId].value;
@@ -113,16 +113,16 @@ export const selectColumnValues = memoize((column) =>
 );
 
 // Selectors related to squares
-const selectSquares = createSelector(
+const selectSquareIds = createSelector(
     [selectBoard],
-    board => board.squares
+    board => board.squareIds
 );
 
 export const selectSquareValues = memoize((square) =>
     createSelector(
-        [selectSquares, selectBoxes],
-        (squares, boxes) => {
-            let boxIdsInSquare = squares[square];
+        [selectSquareIds, selectBoxes],
+        (squareIds, boxes) => {
+            let boxIdsInSquare = squareIds[square];
 
             return boxIdsInSquare.reduce((currObj, boxId) => {
                 let value = boxes[boxId].value;

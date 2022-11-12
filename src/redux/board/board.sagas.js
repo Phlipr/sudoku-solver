@@ -58,7 +58,13 @@ export function* getValuesToCheck(box) {
     const squareValues = yield select(selectSquareValues(square));
     const columnValues = yield select(selectColumnValues(column));
 
+    console.log("rowValues for row ", row, " = ", rowValues);
+    console.log("squareValues for square ", square, " = ", squareValues);
+    console.log("columnValues for column ", column, " = ", columnValues);
+
     const valuesToCheck = Object.assign({}, rowValues, squareValues, columnValues);
+
+    console.log("valuesToCheck for box ", box.boxId, " = ", valuesToCheck);
 
     return valuesToCheck;
 }
@@ -66,9 +72,12 @@ export function* getValuesToCheck(box) {
 //  Logic: given the values inputted already, which values can be put
 //           in this box
 export function* getPossibles(box) {
+    console.log("checking possibles for box ", box.boxId);
     const valuesToCheck = yield call(getValuesToCheck, box);
+    console.log("valuesToCheck = ", valuesToCheck);
 
     const valuesTaken = Object.keys(valuesToCheck);
+    console.log("valuesTaken = ", valuesTaken);
 
     let possibles = [];
 
@@ -141,6 +150,9 @@ export function* handleConflict(inputtedBox, conflictedBox, inputtedValue) {
 
 export function* makesUnsolvable(inputtedBox, inputtedValue) {
     const boxesArray = yield call(getBoxesArray);
+    console.log("boxesArray from makesUnsolvable = ", boxesArray);
+    console.log("inputtedBox = ", inputtedBox);
+    console.log("inputtedValue = ", inputtedValue);
 
     const { row: inputtedRow, column: inputtedColumn, square: inputtedSquare } = inputtedBox;
 
@@ -196,7 +208,9 @@ export function* makesUnsolvable(inputtedBox, inputtedValue) {
         if ((box.value !== 0 && box.value !== '') || box.boxId === inputtedBox.boxId) {
             continue;
         }
+        console.log("getting possibles for box ", box.boxId, " from makeUnsolvable");
         let possibles = yield call(getPossibles, box);
+        console.log("possibles = ", possibles);
 
         const { row, column, square } = box;
 
@@ -267,13 +281,18 @@ export function* makesUnsolvable(inputtedBox, inputtedValue) {
 
 export function* validateBoxValue({ boxId, value }) {
     const box = yield select(selectBox(boxId));
+    console.log("box from validateBoxValue = ", box);
 
     if ((value >= 1 && value <= 9) || !value) {
+        console.log("checking values from validateBoxValue...");
         const valuesToCheck = yield call(getValuesToCheck, box);
+        console.log("valuesToCheck from validateBoxValue = ", valuesToCheck)
         const foundConflict = yield call(checkForConflicts, value, valuesToCheck, box);
+        console.log("foundConflict from validateBoxValue = ", foundConflict)
         if (foundConflict) return;
 
         const possiblesConflict = yield call(makesUnsolvable, box, value);
+        console.log("possiblesConflict from validateBoxValue = ", possiblesConflict);
 
         if (possiblesConflict) return;
 
@@ -421,6 +440,10 @@ export function* slicePuzzle() {
             columnPossibles[box.column][possible].push(box.boxId);
         }
     }
+
+    console.log("rowPossibles = ", rowPossibles);
+    console.log("columnPossibles = ", columnPossibles);
+    console.log("squarePossibles = ", squarePossibles);
 
     for (var j = 1; j < 10; j++) {
         if (slicesSuccessful) break;

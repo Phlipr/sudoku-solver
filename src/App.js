@@ -3,7 +3,7 @@ import React from "react";
 import { useSelector, useDispatch } from 'react-redux';
 
 // components and constants imports
-import Row from './components/row/row.component';
+import BigRow from './components/row/big-row.component';
 import { BOARD_ORDER } from "./constants.js";
 
 // Redux actions and selectors imports
@@ -66,7 +66,7 @@ const App = () => {
   const renderRows = () => {
     let rows = [];
     for (let i = 0; i < BOARD_ORDER; i++) {
-      rows.push(<Row id={i + 1} key={i + 1} />);
+      rows.push(<BigRow bigRowId={i + 1} key={i + 1} />);
     }
 
     return rows;

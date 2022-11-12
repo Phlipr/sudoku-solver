@@ -1,67 +1,82 @@
 import { BOARD_ORDER, TOTAL_BOXES_PER_SQUARE } from "../../constants";
 
 // BoxId = '#-#-#'
-// First # = Macrorow (large row based on BOARD_ORDER, each board contains BOARD_ORDER macrorows and each macrorow contains BOARD_ORDER Squares)
-// Second # = Square within macrorow (1 on left up to BOARD_ORDER on right)
-// Third # - Individual box within square (1 on top, left to TOTAL_BOXES_PER_SQUARE on bottom, right)
+// First # = Row (Top = 1; Bottom = TOTAL_BOXES_PERSQUARE)
+// Second # = Column (Left = 1; Right = TOTAL_BOXES_PERSQUARE)
+// Third # = Square (Top, Left = 1; Bottom, Right = TOTAL_BOXES_PERSQUARE)
 const generateAllBoxIds = () => {
-    let ret = [];
-    for (let macroRow = 1; macroRow < BOARD_ORDER + 1; macroRow++) {
-        for (let macroRowSquare = 1; macroRowSquare < BOARD_ORDER + 1; macroRowSquare++) {
-            for (let boxWihtinSqure = 1; boxWihtinSqure < TOTAL_BOXES_PER_SQUARE + 1; boxWihtinSqure++) {
-                ret.push("" + macroRow + "-" + macroRowSquare + "-" + boxWihtinSqure);
-            }
+    let squareIds = []
+    for (let bigRow = 1; bigRow < BOARD_ORDER + 1; bigRow++) {
+        for (let square = 1; square < BOARD_ORDER + 1; square++) {
+            let squareId = "" + bigRow + "-" + square;
+            squareIds.push(squareId);
         }
     }
 
-    return ret;
+    console.log("squareIds = ", squareIds);
+
+    let boxIds = [];
+    for (let squareId of squareIds) {
+        for (let box = 1; box < TOTAL_BOXES_PER_SQUARE + 1; box++) {
+            let tempBoxId = squareId + "-" + box;
+            let row = getRowNumberFromTempBoxId(tempBoxId);
+            let column = getColumnNumberFromTempBoxId(tempBoxId);
+            let square = getSquareNumberFromTempBoxId(tempBoxId);
+            let boxId = "" + row + "-" + column + "-" + square;
+            boxIds.push(boxId);
+        }
+    }
+
+    console.log("boxIds = ", boxIds);
+
+    return boxIds;
 }
 
 // parsing methods for retreiving information
 // from boxIds
-const parseMacroRow = boxId => {
+const parseFirstNumberFromId = boxId => {
     let indexOfFirstDash = boxId.indexOf("-");
 
     return parseInt(boxId.substring(0, indexOfFirstDash));
 };
 
-const parseMacroColumn = boxId => {
+const parseSecondNumberFromId = boxId => {
     let indexOfFirstDash = boxId.indexOf("-");
     let indexOfSecondDash = boxId.lastIndexOf("-");
 
     return parseInt(boxId.substring(indexOfFirstDash + 1, indexOfSecondDash));
 };
 
-const parseBox = boxId => {
+const parseLastNumberFromId = boxId => {
     let indexOfSecondDash = boxId.lastIndexOf("-");
 
     return parseInt(boxId.substring(indexOfSecondDash + 1, boxId.length));
 };
 
-// determines row number based on boxId
+// determines row number based on tempBoxId
 // each board will have TOTAL_BOXES_PER_SQUARE number of rows
 // with row 1 on top and row TOTAL_BOXES_PER_SQUARE on bottom
-// each board will have BOARD_ORDER number of macrorows AND
-// each macrorow will have BOARD_ORDER number of rows
-const getRowNumber = (boxId) => {
-    let macroRow = parseMacroRow(boxId);
-    let box = parseBox(boxId);
+// each board will have BOARD_ORDER number of bigRows AND
+// each bigRow will have BOARD_ORDER number of rows
+export const getRowNumberFromTempBoxId = (tempBoxId) => {
+    let bigRow = parseFirstNumberFromId(tempBoxId);
+    let box = parseLastNumberFromId(tempBoxId);
 
     let rowlet = Math.ceil(box / BOARD_ORDER); // the row within the square
 
-    let row = (macroRow - 1) * BOARD_ORDER + rowlet; // the row within the board
+    let row = (bigRow - 1) * BOARD_ORDER + rowlet; // the row within the board
 
     return row;
 };
 
-// determines column number based on boxId
+// determines column number based on tempBoxId
 // each board will have TOTAL_BOXES_PER_SQUARE number of columns
 // with column 1 on left and column TOTAL_BOXES_PER_SQUARE on right
 // each board will have BOARD_ORDER number of macrocolumns and
 // each macrocolumn will have BOARD_ORDER number of columns
-const getColumnNumber = (boxId) => {
-    let macroColumn = parseMacroColumn(boxId);
-    let box = parseBox(boxId);
+export const getColumnNumberFromTempBoxId = (tempBoxId) => {
+    let macroColumn = parseSecondNumberFromId(tempBoxId);
+    let box = parseLastNumberFromId(tempBoxId);
 
     let columnlet = box % BOARD_ORDER === 0 ? BOARD_ORDER : box % BOARD_ORDER; // the column within the square
 
@@ -70,29 +85,31 @@ const getColumnNumber = (boxId) => {
     return column;
 };
 
-// determines overall square number based on boxId
+// determines overall square number based on tempBoxid
 // each board will have TOTAL_BOXES_PER_SQUARE number of squares
 // with square 1 being in the top, left and square TOTAL_BOXES_PER_SQUARE in bottom, right
-const getSquareNumber = (boxId) => {
-    let macroRow = parseMacroRow(boxId);
-    let macroColumn = parseMacroColumn(boxId);
+export const getSquareNumberFromTempBoxId = (tempBoxId) => {
+    let bigRow = parseFirstNumberFromId(tempBoxId);
+    let macroColumn = parseSecondNumberFromId(tempBoxId);
 
-    let square = (macroRow - 1) * BOARD_ORDER + macroColumn;
+    let square = (bigRow - 1) * BOARD_ORDER + macroColumn;
 
     return square;
 }
 
 export const generateInitialState = () => {
-    let rowState = {};
-    let columnState = {};
-    let squareState = {};
+    let rowIdState = {};
+    let columnIdState = {};
+    let squareIdState = {};
+    let allPossibleValues = [];
 
     // containers for quick lookup of which boxIds
     //   are in whicih row, column, and state
     for (var i = 1; i < TOTAL_BOXES_PER_SQUARE + 1; i++) {
-        rowState[i] = [];
-        columnState[i] = [];
-        squareState[i] = [];
+        rowIdState[i] = [];
+        columnIdState[i] = [];
+        squareIdState[i] = [];
+        allPossibleValues.push(i);
     }
 
     let boxIdArray = generateAllBoxIds();
@@ -101,25 +118,26 @@ export const generateInitialState = () => {
         currObject[boxId] = {
             boxId: boxId,
             value: 0,
-            row: getRowNumber(boxId),
-            column: getColumnNumber(boxId),
-            square: getSquareNumber(boxId),
+            row: parseFirstNumberFromId(boxId),
+            column: parseSecondNumberFromId(boxId),
+            square: parseLastNumberFromId(boxId),
+            possibles: allPossibleValues,
             hasError: false,
             hasConflictWith: [],
             inputted: false,
             solved: false
         };
-        rowState[currObject[boxId].row].push(boxId);
-        columnState[currObject[boxId].column].push(boxId);
-        squareState[currObject[boxId].square].push(boxId);
+        rowIdState[currObject[boxId].row].push(boxId);
+        columnIdState[currObject[boxId].column].push(boxId);
+        squareIdState[currObject[boxId].square].push(boxId);
         return currObject;
     }, {});
 
     let boardState = {
         boxes: boxState,
-        rows: rowState,
-        columns: columnState,
-        squares: squareState,
+        rowIds: rowIdState,
+        columnIds: columnIdState,
+        squareIds: squareIdState,
         errors: {},
         solving: false,
         boxesInputted: 0,
@@ -130,6 +148,8 @@ export const generateInitialState = () => {
         slicingRounds: 0,
         slicingArray: []
     }
+
+    console.log(boardState);
 
     return boardState;
 };

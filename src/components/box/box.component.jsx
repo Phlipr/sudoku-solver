@@ -6,8 +6,9 @@ import { validateBoxValue } from "../../redux/board/saga.actions";
 
 import { BoxContainer } from "./box.styles";
 
-const Box = ({ id }) => {
-    const box = useSelector(selectBox(id));
+const Box = ({ boxId }) => {
+    console.log("boxId = ", boxId);
+    const box = useSelector(selectBox(boxId));
 
     const { value, hasError, hasConflictWith, solved } = box;
     const hasConflict = hasConflictWith.length > 0;
@@ -18,7 +19,7 @@ const Box = ({ id }) => {
         <BoxContainer
             className="box"
             value={value ? value : ""}
-            onChange={event => validateValue(id, event.target.value)}
+            onChange={event => validateValue(boxId, event.target.value)}
             hasError={hasError || hasConflict}
             isSolved={solved}
         />
